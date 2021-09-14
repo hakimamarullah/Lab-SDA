@@ -14,7 +14,6 @@ class Lab2 {
     private static InputReader in;
     private static PrintWriter out;
     private static Deque<String> antrian = new ArrayDeque<String>();
-    //private static Deque<Integer> jumlah = new ArrayDeque<Integer>();
     public static int totalAntrian=0;
     private static Map<String, Integer> total = new TreeMap<String, Integer>();
     // TODO
@@ -51,31 +50,7 @@ class Lab2 {
                 tmp2=total.get(last);
                 total.put(last, tmp+tmp2);
             }
-            // if(layani>jumlah.peek()){
-            //     tmp = total.get(antrian.peek());
-            //     layani -= jumlah.peek();
-            //     total.put(antrian.poll(),tmp+jumlah.poll());
-            // }
-
-            // if(layani<jumlah.peek()){
-            //     tmp = total.get(antrian.peek());
-            //     total.put(antrian.peek(), tmp+layani);
-            //     tmp= jumlah.peek()-layani;
-            //     layani -=jumlah.poll();
-            //     jumlah.addFirst(tmp);
-            //     if(layani<=0){
-            //         layani=0;
-            //         last=antrian.peek();
-            //     }
-                
-            // }
-
-            // if(layani==jumlah.peek()){
-            //     tmp=total.get(antrian.peek());
-            //     last =antrian.poll();
-            //     total.put(last, tmp+layani);
-            //     layani-=jumlah.poll();
-            // }
+            
             
         }
         return last;
