@@ -23,7 +23,6 @@ public class Lab0 {
         return total.mod(new BigInteger(Integer.toString(P))).intValue();
     }
     
-
     public static void main(String[] args) throws IOException {
         InputStream inputStream = System.in;
         in = new InputReader(inputStream);
@@ -44,7 +43,6 @@ public class Lab0 {
         // TODO: implement method multiplyMod(int, int, int[]) to get the answer
         int ans = multiplyMod(N, P, a);
         out.println(ans);
-
         // don't forget to close/flush the output
         out.close();
     }
