@@ -12,7 +12,17 @@ public class TP1{
     private static InputReader in;
     private static PrintWriter out;
     private static ArrayList<String> intel = new ArrayList<String>();
-    private static Map<String, Kang> map = new HashMap<String, Kang>();
+    private static Map<String, int[]> map = new HashMap<String, int[]>();
+    /*
+
+    map[0] = tipe: 1=B 0=S
+    map[1] = rank
+    map[2] =  initial rank
+    map[3] = evaluate variable 0=False 1=True
+
+
+
+    */
     
     public static void main(String[] args) {
         InputStream inputStream = System.in;
@@ -31,7 +41,7 @@ public class TP1{
                 String tipe = in.next();
 
                 intel.add(code);
-                map.put(code, new Kang(code,tipe,j));
+                map.put(code, new int[]{(int)tipe.charAt(0),0,j,1});
             }
 
             int hari = in.nextInt();
@@ -46,6 +56,7 @@ public class TP1{
                     updateRanking(codeToUpdate, rank);
                     
                 }
+                updateEvaluateVar();
                 for(String obj: intel)
                     out.print(obj+" ");
                 out.println();
@@ -68,6 +79,13 @@ public class TP1{
                 case "EVALUASI":
                     out.println(evaluasi());
                     break;
+                case "DEPLOY":
+                    num = in.nextInt();
+                    // int[] tmp = panutan(num);
+                    // out.println(tmp[0]+" "+tmp[1]);
+                    out.println(num);
+                    break;
+
 
             }
             map.clear();
@@ -80,13 +98,13 @@ public class TP1{
         int maxRank = Integer.MIN_VALUE;
         int idx=0;
         for(int i=0; i<intel.size(); i++){
-            if(maxRank<map.get(intel.get(i)).rankScore()){
-                maxRank=map.get(intel.get(i)).rankScore();
+            if(maxRank<map.get(intel.get(i))[1]){
+                maxRank=map.get(intel.get(i))[1];
                 idx=i;
             }
 
         }
-        return intel.get(idx)+" "+map.get(intel.get(idx)).rankScore();
+        return intel.get(idx)+" "+map.get(intel.get(idx))[1];
     }
 
     //UPDATE RANKING
@@ -99,8 +117,17 @@ public class TP1{
             intel.remove(code);
             intel.add(code);
         }
-        map.get(code).up();
-
+        map.get(code)[1] += 1;
+        
+    }
+    static void updateEvaluateVar(){
+        for(int i=0; i<intel.size(); i++){
+            int[] tmp = map.get(intel.get(i));
+            if(i < tmp[2])
+                    tmp[3] = 0;
+            tmp[2] = i;
+            map.put(intel.get(i), tmp);
+        }
     }
 
     //PANUTAN
@@ -109,7 +136,7 @@ public class TP1{
         int siomay=0;
         int[] rekap = new int[2];
         for(int i=0; i<num; i++){
-            if(map.get(intel.get(i)).isBakso())bakso++;
+            if(map.get(intel.get(i))[0]==66)bakso++;
             else siomay++;
             
         }
@@ -125,17 +152,18 @@ public class TP1{
         String res ="";
 
         while(!queue.isEmpty()){
-            String tmp = map.get(queue.peek()).getType();
+            int tmp = map.get(queue.peek())[0];
+            // /System.out.println(tmp);
 
             try{
 
-                if(!tmp.equals(map.get(temp.peek()).getType())){
+                if(!(tmp==(map.get(temp.peek()))[0])){
                     switch(tmp){
-                        case "B":
+                        case 66:
                             res+= queue.poll()+" ";
                             res+= temp.poll()+"\n";
                             break;
-                        case "S":
+                        case 83:
                             res+= temp.poll()+" ";
                             res+= queue.poll()+"\n";
                             break;
@@ -163,9 +191,13 @@ public class TP1{
     static String evaluasi(){
         String res ="";
         for(int i=0; i<intel.size(); i++){
-            if(map.get(intel.get(i)).initialRank()<=i )
+            // if(map.get(intel.get(i))[2]<=i )
+            //     res += intel.get(i)+" ";
+            if(map.get(intel.get(i))[3] == 1)
                 res += intel.get(i)+" ";
         }
+        if(res.length() == 0)
+            res = "TIDAK ADA";
         return res;
     }
 
@@ -207,51 +239,3 @@ public class TP1{
     }
 }
 
-//KANG BAKSO
-class Kang{
-    private int rank;
-    private String code;
-    private String type;
-    private int initialRank;
-    private boolean eval;
-
-    Kang(String code, String type, int initialRank){
-        this.code=code;
-        this.type = type;
-        this.initialRank = initialRank;
-        this.eval= True;
-        this.toString();
-    }
-    Kang(String code){
-        this.code = code;
-    }
-     public void unEval(){
-        this.eval = false;
-     }
-    public String getCode(){
-        return this.code;
-    }
-
-    public String getType(){
-        return this.type;
-    }
-
-    public void up(){
-        this.rank++;
-    }
-    public int rankScore(){
-        return this.rank;
-    }
-    public int initialRank(){
-        return this.initialRank;
-    }
-    public String toString(){
-        return this.code;
-    }
-
-    public boolean isBakso(){
-        return this.type.equals("B")? true:false;
-    }
-
-    
-}
