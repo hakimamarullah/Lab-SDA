@@ -17,7 +17,7 @@ public class TP1{
 
     map[0] = tipe: 1=B 0=S
     map[1] = rank
-    map[2] =  initial rank
+    map[2] = initial rank
     map[3] = evaluate variable 0=False 1=True
 
 
