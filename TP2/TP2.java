@@ -88,6 +88,10 @@ public class TP2{
         			int banyakLangkah = in.nextInt();
         			out.println(raiden.gerak(arahGerak, banyakLangkah));
         			break;
+        		case "PISAH":
+        			String kuilToCut = in.next();
+        			pulau.get(kuilToCut).pisah(kuilToCut);
+        			
         	}
         }
         out.flush();
@@ -159,7 +163,33 @@ class Pulau extends TP2{
 			
 		}
 	}
+	public void pisah(String namaKuil){
+		Dataran tmp = this.header.next;
+		int initialSize = this.size;
+		int counter = 0;
+		while(tmp != null){
+			if(tmp.isKuil()){
+				if(tmp.getKuilName().equals(namaKuil)){
+					Pulau newPulau = new Pulau(namaKuil);
+					Dataran lastKanan = this.last;
+					newPulau.header.next = tmp;
+					this.last = tmp.prev;
+					tmp.prev = newPulau.header;
+					newPulau.last = lastKanan;
+					this.last.next = null;
+					TP2.pulau.put(namaKuil, newPulau);
+					if(TP2.raiden.current == newPulau.header.next){
+						TP2.raiden.update(newPulau, newPulau.header.next);
+					}
+					out.print(String.valueOf(counter) + " ");
+					out.println(initialSize - counter);
 
+				}
+			}
+			tmp = tmp.next;
+			counter++;
+		}
+	}
 	public int rise(int acuan, int rise){
 		Dataran tmp = this.header.next;
     	int counter =0;
@@ -344,10 +374,11 @@ class Raiden{
 	}
 
 	public int tebas(String arah, int langkah){
-		Dataran current = this.current;
-	
+		Dataran current = this.current;	
 		for(int i=0; i<langkah; i++){
 			current = this.pulau.search(current, arah);
+
+	
 		}
 		this.update(pulau, current);
 		int height = arah.equals("KANAN") ? this.left.getHeight() : this.right.getHeight();
@@ -379,6 +410,5 @@ class Raiden{
 			this.update(this.pulau, this.current);
 			return this.current.getHeight();
 		}
-		//return 0;
 	}
 }
