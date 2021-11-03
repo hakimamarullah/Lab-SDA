@@ -20,6 +20,7 @@ public class TP2{
     public static OutputStream outputStream = System.out;
     public static Map<String, Pulau> pulau = new HashMap<String, Pulau>();
     public static PrintWriter out = new PrintWriter(outputStream);
+    public static Raiden raiden;
 
     public static void main(String[] args) {
     	InputStream inputStream = System.in;
@@ -44,8 +45,8 @@ public class TP2{
         //SET UP RAIDEN
         String pulauRaiden = in.next();
         int indexDataran = in.nextInt();
-        Raiden raiden = new Raiden(pulau.get(pulauRaiden), indexDataran);
-        pulau.get(pulauRaiden).setRaiden(raiden);
+        raiden = new Raiden(pulau.get(pulauRaiden), indexDataran);
+        //pulau.get(pulauRaiden).setRaiden(raiden);
       
         int Q = in.nextInt(); //jumlah kejadian
 
@@ -54,6 +55,38 @@ public class TP2{
         	switch(kejadian){
         		case "CRUMBLE":
         			out.println(pulau.get(namaPulau).crumble());
+        			break;
+        		case "UNIFIKASI":
+        			String pulauUtama = in.next();
+        			String pulauSecondary = in.next();
+        			out.println(pulau.get(pulauUtama).unifikasi(pulau.get(pulauSecondary)));
+        			pulau.put(pulauSecondary, pulau.get(pulauUtama)); //Update pulau after unification
+        			break;
+        		case "TELEPORTASI":
+        			String namaKuil = in.next();
+        			out.println(raiden.teleportasi(pulau.get(namaKuil), namaKuil));
+        			break;
+        		case "QUAKE":
+        			String namaPulauToQuake= in.next();
+        			int height = in.nextInt();
+        			int minus = in.nextInt();
+        			out.println(pulau.get(namaPulauToQuake).quake(height, minus));
+        			break;
+        		case "TEBAS":
+        			String arah = in.next();
+        			int langkah = in.nextInt();
+        			out.println(raiden.tebas(arah, langkah));
+        			break;
+        		case "RISE":
+        			String namaPulauToRise = in.next();
+        			int acuan = in.nextInt();
+        			int rise = in.nextInt();
+        			out.println(pulau.get(namaPulauToRise).rise(acuan, rise));
+        			break;
+        		case "GERAK":
+        			String arahGerak = in.next();
+        			int banyakLangkah = in.nextInt();
+        			out.println(raiden.gerak(arahGerak, banyakLangkah));
         			break;
         	}
         }
@@ -101,8 +134,7 @@ class Pulau extends TP2{
 	int size;
 	Dataran header;
 	Dataran last;
-	Raiden raidenObject;
-	Dataran raiden;
+	
 
 	public Pulau(String nama){
 		this.header = new Dataran(0, null);
@@ -114,20 +146,36 @@ class Pulau extends TP2{
 		if(header.next == null){
 			header.next = last = new Dataran(tinggi);
 			header.next.prev = header;
-			header.next.setAsKuil();
+			header.next.setAsKuil(this.getName());
 			this.size++;
+			//TP2.kuil.put(header.next.getKuilName(), this);
 		}
 		else{
 			Dataran dataran = new Dataran(tinggi, null);
 			last.next = dataran ;
             dataran.prev = last;
             last = dataran;
+            this.size++;
 			
 		}
 	}
 
+	public int rise(int acuan, int rise){
+		Dataran tmp = this.header.next;
+    	int counter =0;
+    	while(tmp != null){
+    		if(tmp.getHeight() > acuan){
+    			tmp.increaseHeight(rise);
+    			counter++;
+    		}
+    		tmp = tmp.next;
+    	}
+    	return counter;
+	}
+	
 	public int crumble(){
 		int tinggi = 0;
+		Dataran raiden = TP2.raiden.current;
 		if(raiden.isKuil()){
 			return tinggi;
 		}
@@ -136,7 +184,7 @@ class Pulau extends TP2{
             raiden = raiden.next;
             raiden.prev = header;
             header.next = raiden;
-            raidenObject.update(raiden);
+            TP2.raiden.update(this,raiden);
         }
         else if(raiden.prev == header && raiden.next == null){
             tinggi = raiden.getHeight();
@@ -146,21 +194,50 @@ class Pulau extends TP2{
             tinggi = raiden.getHeight();
             raiden = raiden.prev;
             raiden.next = raiden.next.next;
-            raidenObject.update(raiden);
+            TP2.raiden.update(this,raiden);
         }
         else if(raiden.prev != header && raiden == last){
             tinggi = raiden.getHeight();
             raiden = raiden.prev;
             raiden.next = raiden.next.next;
             last = raiden;
-            raidenObject.update(raiden);
+            TP2.raiden.update(this,raiden);
         }
         return tinggi;
     }
+    public Dataran search(Dataran dataran, String arah){
+    	Dataran tmp = arah.equals("KANAN") ? dataran.next : dataran.prev;
+    	int height = dataran.getHeight();
+    	while(tmp != null){
+    		if(tmp.getHeight() ==  height){
+    			return tmp;
+    		}
+    		tmp = arah.equals("KANAN") ? tmp.next : tmp.prev;
+    	}
+    	return dataran;
+    }
 
-	public void setRaiden(Raiden raiden){
-		this.raidenObject = raiden;
-		this.raiden = raidenObject.current;
+    public int quake(int height, int minus){
+    	Dataran tmp = this.header.next;
+    	int counter =0;
+    	while(tmp != null){
+    		if(tmp.getHeight() < height){
+    			tmp.decreaseHeight(minus);
+    			counter++;
+    		}
+    		tmp = tmp.next;
+    	}
+    	return counter;
+    }
+
+	public int unifikasi(Pulau pulau){
+		this.size = this.size + pulau.size;
+		this.last.next = pulau.header.next;
+		pulau.header.next.prev = this.last;
+		this.last = pulau.last;
+		pulau.header = null;
+		return this.size;
+
 	}
 
 	public void print(){
@@ -181,6 +258,7 @@ class Dataran{
 	Dataran next;
 	Dataran prev;
 	boolean isKuil;
+	String namaKuil;
 	int tinggi;
 
 	public Dataran(int tinggi){
@@ -198,12 +276,28 @@ class Dataran{
 		return this.tinggi;
 	}
 
-	public void setAsKuil(){
+	public void setAsKuil(String nama){
 		this.isKuil = true;
+		this.namaKuil = nama;
+	}
+
+	public String getKuilName(){
+		if(this.isKuil){
+			return this.namaKuil;
+		}
+		return "BUKAN KUIL";
 	}
 
 	public boolean isKuil(){
 		return this.isKuil;
+	}
+
+	public void decreaseHeight(int minus){
+		this.tinggi = Math.abs(this.tinggi - minus);
+	}
+
+	public void increaseHeight(int rise){
+		this.tinggi = this.tinggi + rise;
 	}
 }
 
@@ -229,9 +323,62 @@ class Raiden{
 		return out;
 	}
 
-	public void update(Dataran newCurrent){
+	public void update(Pulau pulau,Dataran newCurrent){
+		this.pulau = pulau;
 		this.current = newCurrent;
 		this.left = current.prev;
 		this.right = current.next;
+	}
+
+	public int teleportasi(Pulau pulau, String namaKuil){
+		Dataran tmp = pulau.header.next;
+		this.pulau = pulau;
+		while(tmp != null){
+			if(tmp.getKuilName().equals(namaKuil)){
+				this.update(this.pulau, tmp);
+				return tmp.getHeight();
+			}
+			tmp = tmp.next;
+		}
+		return 0;
+	}
+
+	public int tebas(String arah, int langkah){
+		Dataran current = this.current;
+	
+		for(int i=0; i<langkah; i++){
+			current = this.pulau.search(current, arah);
+		}
+		this.update(pulau, current);
+		int height = arah.equals("KANAN") ? this.left.getHeight() : this.right.getHeight();
+		
+		return height;
+	}
+	
+	public int gerak(String arah, int langkah){
+		if(pulau.header.next == null){
+			return 0;
+		}
+		if(arah.equals("KIRI") && this.left.getHeight() == 0){
+			return this.current.getHeight();
+		}
+		else if(arah.equals("KANAN") && this.right.getHeight() == 0){
+			return this.current.getHeight();
+		}
+		else if(arah.equals("KIRI")){
+			for(int i=0; i<langkah; i++){
+				this.current = this.current.prev;
+			}
+			this.update(this.pulau, this.current);
+			return this.current.getHeight();
+		}
+		else{
+			for(int i=0; i<langkah; i++){
+				this.current = this.current.next;
+			}
+			this.update(this.pulau, this.current);
+			return this.current.getHeight();
+		}
+		//return 0;
 	}
 }
