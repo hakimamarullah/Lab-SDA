@@ -100,7 +100,6 @@ public class TP2{
         	}
 
         }
-        
         out.flush();
 
     }
@@ -159,6 +158,7 @@ class Pulau extends TP2{
 			header.next.prev = header;
 			header.next.setAsKuil(this.getName());
 			this.size++;
+			//TP2.kuil.put(header.next.getKuilName(), this);
 		}
 		else{
 			Dataran dataran = new Dataran(tinggi, null);
@@ -211,26 +211,58 @@ class Pulau extends TP2{
 	}
 	
 	public int crumble(Dataran x){
+		int tinggi = 0;
 		Dataran raiden = x;
+		//TP2.out.println(x.isKuil() + " " + x.getHeight());
 		if(raiden.isKuil()){
-			return 0;
+			return tinggi;
 		}
 		if(raiden.next == null){
 			Dataran tmp = raiden.prev;
 			raiden.prev.next = null;
 			TP2.raiden.update(this, tmp);
+			return x.getHeight();
 
 		}
-		else if (raiden.next != null) {
+		if (raiden.next != null) {
 			Dataran tmp = raiden.prev;
             raiden.next.prev = raiden.prev;
-            raiden.prev.next = raiden.next;
             TP2.raiden.update(this, tmp);
         }
-        
+ 
+        // Change prev only if node to be deleted
+        // is NOT the first node
+        if (raiden.prev != null) {
+            raiden.prev.next = raiden.next;
+        }
+ 
+		// else if(raiden.prev == header && raiden.next != null){
+  //           tinggi = raiden.getHeight();
+  //           raiden = raiden.next;
+  //           raiden.prev = header;
+  //           header.next = raiden;
+  //           TP2.raiden.update(this,raiden);
+  //       }
+  //       else if(raiden.prev == header && raiden.next == null){
+  //           tinggi = raiden.getHeight();
+  //           header.next = null;
+  //       }
+  //       else if(raiden.prev != header && raiden != last){
+  //           tinggi = raiden.getHeight();
+  //           raiden = raiden.prev;
+  //           raiden.next = raiden.next.next;
+  //           TP2.raiden.update(this,raiden);
+  //       }
+  //       else if(raiden.prev != header && raiden == last){
+  //           tinggi = raiden.getHeight();
+  //           raiden = raiden.prev;
+  //           raiden.next = raiden.next.next;
+  //           last = raiden;
+  //           System.out.println("DEBUG4");
+  //           TP2.raiden.update(this,raiden);
+  //       }
         return x.getHeight();
     }
-
     public Dataran search(Dataran dataran, String arah){
     	Dataran tmp = arah.equals("KANAN") ? dataran.next : dataran.prev;
     	int height = dataran.getHeight();
@@ -386,10 +418,11 @@ class Raiden{
 		if(pulau.header.next == null){
 			return 0;
 		}
-		if(arah.equals("KIRI") && this.current.prev.getHeight() == 0){
+		if(arah.equals("KIRI") && this.left.getHeight() == 0){
 			return this.current.getHeight();
 		}
-		else if(arah.equals("KANAN") && this.current.next == null){
+		else if(arah.equals("KANAN") && this.right.getHeight() == 0){
+
 			return this.current.getHeight();
 		}
 		else if(arah.equals("KIRI")){
@@ -437,10 +470,11 @@ class Raiden{
         }
 
         else if(raiden==last){
-            Dataran dataran= new Dataran(height);
-            raiden.next = dataran;
-            dataran.prev = raiden;
-            this.pulau.last = dataran;
+            Dataran dataran= new Dataran(height, null);
+            last.next = dataran;
+            dataran.prev = last;
+            last = dataran;
+            raiden = dataran;
             return height;
         }
         return 0;
