@@ -104,7 +104,7 @@ public class TP2{
         	}
 
         }
-        
+        //pulau.get("ENKAN").print();
         out.flush();
 
     }
@@ -149,7 +149,6 @@ class Pulau extends TP2{
 	int size;
 	Dataran header;
 	Dataran last;
-	
 
 	public Pulau(String nama){
 		this.header = new Dataran(0, null);
@@ -248,16 +247,20 @@ class Pulau extends TP2{
     	return counter;
     }
 
-    public Dataran search(Dataran dataran, String arah){
+    public Dataran search(Dataran dataran, String arah, int langkah){
     	Dataran tmp = arah.equals("KANAN") ? dataran.next : dataran.prev;
     	int height = dataran.getHeight();
-    	while(tmp != null){
+    	int counter = 0;
+    	Dataran current = dataran;
+    	while(tmp != null && counter < langkah){
     		if(tmp.getHeight() ==  height){
-    			return tmp;
+    			current = tmp;
+    			counter++;
     		}
     		tmp = arah.equals("KANAN") ? tmp.next : tmp.prev;
+
     	}
-    	return dataran;
+    	return current;
     }
 
     public int quake(int height, int minus){
@@ -388,11 +391,7 @@ class Raiden{
 
 	public int tebas(String arah, int langkah){
 		Dataran current = this.current;	
-		for(int i=0; i<langkah; i++){
-			current = this.pulau.search(current, arah);
-
-	
-		}
+		current = this.pulau.search(current, arah, langkah);
 		this.update(pulau, current);
 		int height = arah.equals("KANAN") ? this.left.getHeight() : this.right.getHeight();
 		
@@ -410,14 +409,14 @@ class Raiden{
 			return this.current.getHeight();
 		}
 		else if(arah.equals("KIRI")){
-			for(int i=0; i<langkah; i++){
+			for(int i=0; i<langkah && this.current.prev.getHeight() != 0; i++){
 				this.current = this.current.prev;
 			}
 			this.update(this.pulau, this.current);
 			return this.current.getHeight();
 		}
 		else{
-			for(int i=0; i<langkah; i++){
+			for(int i=0; i<langkah && this.current.next != null; i++){
 				this.current = this.current.next;
 			}
 			this.update(this.pulau, this.current);
@@ -462,4 +461,5 @@ class Raiden{
         }
         return 0;
 	}
+
 }
