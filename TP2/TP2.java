@@ -46,7 +46,6 @@ public class TP2{
         String pulauRaiden = in.next();
         int indexDataran = in.nextInt();
         raiden = new Raiden(pulau.get(pulauRaiden), indexDataran);
-        //pulau.get(pulauRaiden).setRaiden(raiden);
       
         int Q = in.nextInt(); //jumlah kejadian
 
@@ -55,7 +54,6 @@ public class TP2{
         	switch(kejadian){
         		case "CRUMBLE":
         			out.println(pulau.get(raiden.pulau.getName()).crumble(raiden.current));
-        			//pulau.get(raiden.pulau.getName()).print();
         			break;
         		case "UNIFIKASI":
         			String pulauUtama = in.next();
