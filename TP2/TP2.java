@@ -96,7 +96,11 @@ public class TP2{
         		case "STABILIZE":
         			out.println(raiden.stabilize());
         			break;
-        			
+        		case "SWEEPING":
+        			String pulauTerdampak = in.next();
+        			int ketinggianAir = in.nextInt();
+        			out.println(pulau.get(pulauTerdampak).sweeping(ketinggianAir));
+        			break;
         	}
 
         }
@@ -184,6 +188,8 @@ class Pulau extends TP2{
 					tmp.prev = newPulau.header;
 					newPulau.last = lastKanan;
 					this.last.next = null;
+					newPulau.size = initialSize - counter;
+					this.size = counter;
 					TP2.pulau.put(namaKuil, newPulau);
 					if(TP2.raiden.current == newPulau.header.next){
 						TP2.raiden.update(newPulau, newPulau.header.next);
@@ -229,6 +235,17 @@ class Pulau extends TP2{
         }
         
         return x.getHeight();
+    }
+    public int sweeping(int ketinggianAir){
+    	int counter =0;
+    	Dataran pointer = this.header.next;
+    	while( pointer != null){
+    		if(pointer.getHeight() < ketinggianAir){
+    			counter++;
+    		}
+    		pointer = pointer.next;
+    	}
+    	return counter;
     }
 
     public Dataran search(Dataran dataran, String arah){
