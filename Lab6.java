@@ -1,3 +1,12 @@
+/*
+
+Nama    : Hakim Amarullah
+NPM     : 1906293051
+Tugas   : Lab6
+Topik   : Binary Heap
+Tahun   : 2021
+
+*/
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,12 +50,7 @@ public class Lab6 {
                 heap.doR();
             }
         }
-        //  for(Dataran x: heap.toArray()){
-        //     System.out.print(x.getHeight() + " " + x.index + ", ");
-        //     //System.out.print(x.getHeight() + " ");
-        // }
-        // System.out.println();
-
+       
         out.flush();
     }
 
