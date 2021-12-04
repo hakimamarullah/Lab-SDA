@@ -29,6 +29,7 @@ public class TP2{
         int N = in.nextInt();
 
         String namaPulau="";
+        //O(N X D)
         for(int i=0; i<N; i++){
         	namaPulau = in.next();
         	int jumlahDataran = in.nextInt();
@@ -49,38 +50,36 @@ public class TP2{
       
         int Q = in.nextInt(); //jumlah kejadian
 
+        //(N x D) + E + (Q x D)
         for(int i=0; i<Q; i++){
         	String kejadian = in.next();
         	switch(kejadian){
         		case "CRUMBLE":
-        			out.println(pulau.get(raiden.pulau.getName()).crumble(raiden.current));
+        			out.println(pulau.get(raiden.pulau.getName()).crumble(raiden.current)); // O(1)
         			//out.println("SUCCESS CRUMBLE ");
         			break;
         		case "UNIFIKASI":
         			String pulauUtama = in.next();
         			String pulauSecondary = in.next();
-        			out.println(pulau.get(pulauUtama).unifikasi(pulau.get(pulauSecondary)));
+        			out.println(pulau.get(pulauUtama).unifikasi(pulau.get(pulauSecondary))); //O(N)
         			pulau.put(pulauSecondary, pulau.get(pulauUtama)); //Update pulau after unification
-        			//out.println("SUCCESS UNIFIKASI " + pulauUtama + " " + pulauSecondary);
-        			out.print("DEBUG " + " " + pulauUtama + " " + pulauSecondary);
-        			pulau.get(pulauUtama).print();
         			break;
         		case "TELEPORTASI":
         			String namaKuil = in.next();
-        			out.println(raiden.teleportasi(pulau.get(namaKuil), namaKuil));
+        			out.println(raiden.teleportasi(pulau.get(namaKuil), namaKuil)); //O(Jumlah Kuil)
         			//out.println("SUCCESS TELEPORTASI " + namaKuil);
         			break;
         		case "QUAKE":
         			String namaPulauToQuake= in.next();
         			long height = in.nextLong();
         			long minus = in.nextLong();
-        			out.println(pulau.get(namaPulauToQuake).quake(height, minus));
+        			out.println(pulau.get(namaPulauToQuake).quake(height, minus)); //O(D)
         			//out.println("SUCCESS QUAKE " + namaPulauToQuake + " " + height + " " + minus);
         			break;
         		case "TEBAS":
         			String arah = in.next();
         			int langkah = in.nextInt();
-        			out.println(raiden.tebas(arah, langkah));
+        			out.println(raiden.tebas(arah, langkah));//O(S)
         			//out.println("SUCCESS TEBAS " + arah + " " + langkah);
         			break;
         		case "RISE":
@@ -98,7 +97,7 @@ public class TP2{
         			break;
         		case "PISAH":
         			String kuilToCut = in.next();
-        			out.println(Pulau.pisah(kuilToCut));
+        			out.println(Pulau.pisah(kuilToCut));//O(N)
         			//out.println("SUCCESS PISAH " + kuilToCut);
         			break;
         		case "STABILIZE":
@@ -108,9 +107,7 @@ public class TP2{
         		case "SWEEPING":
         			String pulauTerdampak = in.next();
         			long ketinggianAir = in.nextLong();
-        			if(pulauTerdampak.equals("JE"))
-        				pulau.get("JE").print();
-        			out.println(pulau.get(pulauTerdampak).sweeping(ketinggianAir));
+        			out.println(pulau.get(pulauTerdampak).sweeping(ketinggianAir)); //O(D)
         			//out.println("SUCCESS SWEEPING " + pulauTerdampak + " " + ketinggianAir);
         			break;
         	}
@@ -298,7 +295,6 @@ class Pulau extends TP2{
     }
     catch(Exception e){
     	//System.out.println(this.getName());
-    	out.println(this.getName());
     	return 1000000000;
     }
         
@@ -347,66 +343,45 @@ class Pulau extends TP2{
 
 	public int unifikasi(Pulau pulau){
 		this.kuil.putAll(pulau.kuil);
-		pulau.kuil.clear();
+		pulau.kuil.clear(); //O(N)
 		try{
-		if(pulau == TP2.raiden.pulau){
-			TP2.raiden.updatePulau(this);
+			if(pulau == TP2.raiden.pulau){
+				TP2.raiden.updatePulau(this);
+			}
+
+	    	if(this.header.next.next == null){
+	    		this.header.next.next = pulau.header.next;
+	    	}
+
+			pulau.header.next.prevKuil = this.lastKuil;
+			this.lastKuil.nextKuil = pulau.header.next;
+			this.lastKuil = pulau.header.next;
+			this.last.next = pulau.header.next;
+
+
+
+			pulau.header.next = null;
+			pulau.kuil.putAll(this.kuil);
+			updateAllPulau(this);
+			Dataran tmp = this.header.next;
+			while(tmp != null){
+				this.lastKuil = tmp;
+				tmp = tmp.nextKuil;
+									
+			}
+
+			return getSize();
 		}
-		// if(this.getName().equals("TOWIDO")){
-  //   		TP2.out.print("DEPLOY3--------------------------- ");
-  //   		TP2.pulau.get("WO").print();
-  //   	}
-    	if(this.header.next.next == null){
-    		this.header.next.next = pulau.header.next;
-    	}
-		pulau.header.next.prevKuil = this.lastKuil;
-		this.lastKuil.nextKuil = pulau.header.next;
-		this.lastKuil = pulau.header.next;
-		this.last.next = pulau.header.next;
-		// if(this.getName().equals("TOWIDO")){
-  //   		TP2.out.print("DEPLOY4--------------------------- ");
-  //   		TP2.out.print(this.last.next);
-  //   		this.print();
-
-  //   	}
-		pulau.header.next.prev = this.last;
-		// if(this.getName().equals("TOWIDO")){
-  //   		TP2.out.print("DEPLOY5--------------------------- ");
-  //   		TP2.out.print(this.last.next);
-  //   		this.print();
-
-  //   	}
-		this.last = pulau.last;
-		// if(this.getName().equals("TOWIDO")){
-  //   		TP2.out.print("DEPLOY6--------------------------- ");
-  //   		TP2.out.print(this.last);
-  //   		TP2.out.print(this.header.next.next);
-
-  //   	}
-		pulau.header.next = null;
-		pulau.kuil.putAll(this.kuil);
-		updateAllPulau(this);
-		Dataran tmp = this.header.next;
-		while(tmp != null){
-			this.lastKuil = tmp;
-			tmp = tmp.nextKuil;
-								
-		}
-		// if(this.getName().equals("TOWIDO")){
-  //   		TP2.out.print("DEPLOY2");
-  //   		TP2.pulau.get("WO").print();
-  //   	}
-		return getSize();}
 		catch (Exception e) {
-			System.out.println(e);
 			return 100000;
 		}
 	}
+
 	public int getSize(){
 		Dataran tmp = this.header.next;
 		int counter =0;
 		while(tmp != null){
-			//System.out.println(tmp.kuilSize);
+			
 			counter+= tmp.kuilSize;
 			tmp = tmp.nextKuil;
 		}
@@ -541,7 +516,7 @@ class Raiden{
 
 	public long tebas(String arah, int langkah){
 		Dataran current = this.current;	
-		current = this.pulau.search(current, arah, langkah);
+		current = this.pulau.search(current, arah, langkah); // O(S)
 		if(current == this.current){
 			return 0;
 		}
