@@ -30,6 +30,7 @@ public class TP3d{
         perusahaan = new Network(N);
         karyawanPangkat = new Karyawan[N+1];
        
+       //O(N)
         for(int i=1; i<N+1; i++){
             int pangkat = in.nextInt();
             listKaryawan.addElement(new Karyawan(i, pangkat));
@@ -39,13 +40,15 @@ public class TP3d{
 
 
 
-
+        //O(M Log N)
         while(M-- > 0){
             int source = in.nextInt(); // source berteman dengan dest
             int dest = in.nextInt();
             listKaryawan.get(source-1).addFriend(listKaryawan.get(dest-1));
         }
 
+        //O(QN Log N + M Log N + N)
+        //O(N(Q Log N + 1) + M Log N)
         while(Q-- > 0){
             int command = in.nextInt();
 
@@ -53,22 +56,22 @@ public class TP3d{
                 case 1://TAMBAH
                     int source = in.nextInt(); // source berteman dengan dest
                     int dest = in.nextInt();
-                    listKaryawan.get(source-1).addFriend(listKaryawan.get(dest-1));
+                    listKaryawan.get(source-1).addFriend(listKaryawan.get(dest-1)); //O(Log N)
                     break;
                 case 2://RESIGN
                     int nomorKaryawan = in.nextInt();
-                    listKaryawan.get(nomorKaryawan-1).resign();
+                    listKaryawan.get(nomorKaryawan-1).resign(); //O(N Log N)
                   
                     N--;
                     break;
                 case 3://CARRY
                     int nomorKaryawanCarry = in.nextInt();
-                    out.println(listKaryawan.get(nomorKaryawanCarry-1).carry());
+                    out.println(listKaryawan.get(nomorKaryawanCarry-1).carry());//O(Log N)
                 
                     break;
                 case 4://BOSS
                     int networkKaryawan = in.nextInt();
-                    out.println(perusahaan.boss(listKaryawan.get(networkKaryawan-1)));
+                    out.println(perusahaan.boss(listKaryawan.get(networkKaryawan-1))); //O(M+N)
                   
                     //perusahaan.cetakPath()
                     break;
@@ -78,7 +81,7 @@ public class TP3d{
                     
                     break;
                 case 6://SIMULASI
-                    out.println(simulasi(karyawanPangkat, N));
+                    out.println(simulasi(karyawanPangkat, N)); //O(N)
                     break;
                 case 7://NETWORKING
                     break;
@@ -187,7 +190,7 @@ public class TP3d{
         for(Karyawan x: this.destList){
             try{
             if(x.friendsList != null){
-                x.friendsList.percolateDown(tmp);
+                x.friendsList.percolateDown(tmp); //O(Log N)
             }
         }
             catch(Exception e){

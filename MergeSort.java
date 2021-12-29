@@ -1,10 +1,10 @@
-class MergeSort{
-    public static void mergeSort(Dataran[] array){
+public class MergeSort{
+    public static void mergeSort(int[] array){
         mergeSort(array, 0, array.length - 1);
     }
     
     //awal dan akhir menandakan subarray-nya
-    public static void mergeSort(Dataran[] array, int awal, int akhir){
+    public static void mergeSort(int[] array, int awal, int akhir){
         
         int length = (akhir - awal) + 1;
         int tengah = awal + (akhir - awal)/2;
@@ -19,13 +19,13 @@ class MergeSort{
         merge(array,awal,tengah,akhir);// O(N)
     }
     
-    public static void merge(Dataran[] array, int awal, int tengah, int akhir){
+    public static void merge(int[] array, int awal, int tengah, int akhir){
         int kiriLength = tengah - awal + 1;
         int kananLength = akhir - tengah;
         
         //copy dulu sub-array kiri dan kanan
-        Dataran[] arrayKiri = new Dataran[kiriLength];
-        Dataran[] arrayKanan = new Dataran[kananLength];
+        int[] arrayKiri = new int[kiriLength];
+        int[] arrayKanan = new int[kananLength];
         for(int kr = 0, kiriAsli = awal; kr < kiriLength; kr++, kiriAsli++)
             arrayKiri[kr] = array[kiriAsli];
         for(int kn = 0, kananAsli = tengah + 1; kn < kananLength; kn++, kananAsli++)
@@ -36,19 +36,13 @@ class MergeSort{
         int kiri = 0, kanan = 0, i = awal;
         //compare-compare kiri dan kanan, siapa yang di-copy ke array asli
         while(i <= akhir && kiri <= kiriLength-1 && kanan <= kananLength-1){
-            if(arrayKiri[kiri].getHeight() < arrayKanan[kanan].getHeight()){
+            if(arrayKiri[kiri]< arrayKanan[kanan]){
                  array[i++] = arrayKiri[kiri++];
             }
-           else if(arrayKiri[kiri].getHeight() > arrayKanan[kanan].getHeight()){
+           else if(arrayKiri[kiri] > arrayKanan[kanan]){
             array[i++] = arrayKanan[kanan++];
             }
-            else{
-                if(arrayKiri[kiri].index < arrayKanan[kanan].index)
-                    array[i++] = arrayKiri[kiri++];
-                else
-                    array[i++] = arrayKanan[kanan++];
-
-            }
+           
         }
         
         //copy sisa dari arrayKiri jika ada
